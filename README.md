@@ -192,67 +192,95 @@ https://oxedtkrjf7.execute-api.us-east-1.amazonaws.com/prod
 
 URL base: `https://oxedtkrjf7.execute-api.us-east-1.amazonaws.com/prod`
 
+> Todos los ejemplos incluyen el header `-H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd"` requerido.
+
 **GET /usuarios** — `200 OK`
 ```bash
-curl /usuarios
+curl /usuarios \
+  -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd"
 # → [{ "id": "admin-id-123", "email": "admin@identera.com", "role": "ADMINISTRADOR", "status": "enabled", ... }]
 ```
 
 **POST /login** — `200 OK` / `401` / `403`
 ```bash
-curl -X POST /login -d '{"email":"admin@identera.com","password":"admin123"}'
+curl -X POST /login \
+  -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@identera.com","password":"admin123"}'
 # → { "id": "admin-id-123", "email": "admin@identera.com", "role": "ADMINISTRADOR", "status": "enabled" }
 
-curl -X POST /login -d '{"email":"admin@identera.com","password":"incorrecta"}'
+curl -X POST /login \
+  -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@identera.com","password":"incorrecta"}'
 # → 401 { "detail": "Credenciales incorrectas." }
 
-curl -X POST /login -d '{"email":"inhabilitado@test.com","password":"test123"}'
+curl -X POST /login \
+  -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"inhabilitado@test.com","password":"test123"}'
 # → 403 { "detail": "Tu cuenta ha sido inhabilitada. Contacta al administrador." }
 ```
 
 **POST /usuarios** — `201 Created`
 ```bash
-curl -X POST /usuarios -d '{"id":"uuid-1","email":"prueba@test.com","password":"test123","name":"Usuario Prueba","role":"USUARIO","status":"enabled"}'
+curl -X POST /usuarios \
+  -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd" \
+  -H "Content-Type: application/json" \
+  -d '{"id":"uuid-1","email":"prueba@test.com","password":"test123","name":"Usuario Prueba","role":"USUARIO","status":"enabled"}'
 # → { "id": "uuid-1", "email": "prueba@test.com", "role": "USUARIO", "status": "enabled", "createdAt": "2026-06-11T22:33:47.583Z" }
 # El sistema genera automáticamente un carnet en blanco con codigoValidador para role=USUARIO.
 ```
 
 **GET /carnets?userId=** — `200 OK`
 ```bash
-curl /carnets?userId=uuid-1
+curl "/carnets?userId=uuid-1" \
+  -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd"
 # → [{ "id": "...", "userId": "uuid-1", "fecha": "...", "data": { "nombre": "Usuario Prueba", "cargo": "Colaborador", "codigoValidador": "N8JECV6K", "arl": "—", "eps": "—", "cedula": "—", "foto": null } }]
 ```
 
 **PATCH /carnets/{carnetId}** — `200 OK`
 ```bash
-curl -X PATCH /carnets/{carnetId} -d '{"cargo":"Desarrollador","arl":"Sura","eps":"Sanitas","cedula":"12345678"}'
+curl -X PATCH /carnets/{carnetId} \
+  -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd" \
+  -H "Content-Type: application/json" \
+  -d '{"cargo":"Desarrollador","arl":"Sura","eps":"Sanitas","cedula":"12345678"}'
 # → { "id": "...", "userId": "uuid-1", "data": { "cargo": "Desarrollador", "arl": "Sura", "eps": "Sanitas", "cedula": "12345678", "codigoValidador": "N8JECV6K", ... } }
 ```
 
 **POST /qr/regenerar** — `200 OK`
 ```bash
-curl -X POST /qr/regenerar -d '{"userId":"uuid-1"}'
+curl -X POST /qr/regenerar \
+  -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd" \
+  -H "Content-Type: application/json" \
+  -d '{"userId":"uuid-1"}'
 # → { "userId": "uuid-1", "codigoValidador": "ATPLLRND" }
 
-curl /qr/regenerar?userId=uuid-1
+curl "/qr/regenerar?userId=uuid-1" \
+  -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd"
 # → { "userId": "uuid-1", "codigoValidador": "XJEHXUQ3" }  (no persiste)
 ```
 
 **PATCH /usuarios/{email}/status** — `200 OK`
 ```bash
-curl -X PATCH /usuarios/prueba%40test.com/status -d '{"status":"disabled"}'
+curl -X PATCH /usuarios/prueba%40test.com/status \
+  -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd" \
+  -H "Content-Type: application/json" \
+  -d '{"status":"disabled"}'
 # → { "status": "success" }
 ```
 
 **DELETE /usuarios/{email}** — `200 OK`
 ```bash
-curl -X DELETE /usuarios/prueba%40test.com
+curl -X DELETE /usuarios/prueba%40test.com \
+  -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd"
 # → { "status": "success" }  (elimina el usuario y todos sus carnets asociados)
 ```
 
 **GET /validaciones** — `200 OK`
 ```bash
-curl /validaciones
+curl /validaciones \
+  -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd"
 # → []
 ```
 
