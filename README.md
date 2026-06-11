@@ -97,6 +97,12 @@ Identera-Full-Stack-Itera/
 https://oxedtkrjf7.execute-api.us-east-1.amazonaws.com/prod
 ```
 
+**Autenticación:** todas las peticiones requieren el header:
+```
+x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd
+```
+Las solicitudes sin la key correcta reciben `401 Unauthorized`. Las solicitudes `OPTIONS` (preflight CORS) no requieren la key.
+
 ### identera-lambda-validaciones
 
 | Método | Ruta | Descripción |
@@ -192,30 +198,28 @@ https://oxedtkrjf7.execute-api.us-east-1.amazonaws.com/prod
 
 URL base: `https://oxedtkrjf7.execute-api.us-east-1.amazonaws.com/prod`
 
-> Todos los ejemplos incluyen el header `-H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd"` requerido.
-
 **GET /usuarios** — `200 OK`
 ```bash
-curl /usuarios \
+curl https://oxedtkrjf7.execute-api.us-east-1.amazonaws.com/prod/usuarios \
   -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd"
 # → [{ "id": "admin-id-123", "email": "admin@identera.com", "role": "ADMINISTRADOR", "status": "enabled", ... }]
 ```
 
 **POST /login** — `200 OK` / `401` / `403`
 ```bash
-curl -X POST /login \
+curl -X POST https://oxedtkrjf7.execute-api.us-east-1.amazonaws.com/prod/login \
   -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd" \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@identera.com","password":"admin123"}'
 # → { "id": "admin-id-123", "email": "admin@identera.com", "role": "ADMINISTRADOR", "status": "enabled" }
 
-curl -X POST /login \
+curl -X POST https://oxedtkrjf7.execute-api.us-east-1.amazonaws.com/prod/login \
   -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd" \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@identera.com","password":"incorrecta"}'
 # → 401 { "detail": "Credenciales incorrectas." }
 
-curl -X POST /login \
+curl -X POST https://oxedtkrjf7.execute-api.us-east-1.amazonaws.com/prod/login \
   -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd" \
   -H "Content-Type: application/json" \
   -d '{"email":"inhabilitado@test.com","password":"test123"}'
@@ -224,7 +228,7 @@ curl -X POST /login \
 
 **POST /usuarios** — `201 Created`
 ```bash
-curl -X POST /usuarios \
+curl -X POST https://oxedtkrjf7.execute-api.us-east-1.amazonaws.com/prod/usuarios \
   -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd" \
   -H "Content-Type: application/json" \
   -d '{"id":"uuid-1","email":"prueba@test.com","password":"test123","name":"Usuario Prueba","role":"USUARIO","status":"enabled"}'
@@ -234,14 +238,14 @@ curl -X POST /usuarios \
 
 **GET /carnets?userId=** — `200 OK`
 ```bash
-curl "/carnets?userId=uuid-1" \
+curl "https://oxedtkrjf7.execute-api.us-east-1.amazonaws.com/prod/carnets?userId=uuid-1" \
   -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd"
 # → [{ "id": "...", "userId": "uuid-1", "fecha": "...", "data": { "nombre": "Usuario Prueba", "cargo": "Colaborador", "codigoValidador": "N8JECV6K", "arl": "—", "eps": "—", "cedula": "—", "foto": null } }]
 ```
 
 **PATCH /carnets/{carnetId}** — `200 OK`
 ```bash
-curl -X PATCH /carnets/{carnetId} \
+curl -X PATCH https://oxedtkrjf7.execute-api.us-east-1.amazonaws.com/prod/carnets/{carnetId} \
   -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd" \
   -H "Content-Type: application/json" \
   -d '{"cargo":"Desarrollador","arl":"Sura","eps":"Sanitas","cedula":"12345678"}'
@@ -250,20 +254,20 @@ curl -X PATCH /carnets/{carnetId} \
 
 **POST /qr/regenerar** — `200 OK`
 ```bash
-curl -X POST /qr/regenerar \
+curl -X POST https://oxedtkrjf7.execute-api.us-east-1.amazonaws.com/prod/qr/regenerar \
   -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd" \
   -H "Content-Type: application/json" \
   -d '{"userId":"uuid-1"}'
 # → { "userId": "uuid-1", "codigoValidador": "ATPLLRND" }
 
-curl "/qr/regenerar?userId=uuid-1" \
+curl "https://oxedtkrjf7.execute-api.us-east-1.amazonaws.com/prod/qr/regenerar?userId=uuid-1" \
   -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd"
 # → { "userId": "uuid-1", "codigoValidador": "XJEHXUQ3" }  (no persiste)
 ```
 
 **PATCH /usuarios/{email}/status** — `200 OK`
 ```bash
-curl -X PATCH /usuarios/prueba%40test.com/status \
+curl -X PATCH https://oxedtkrjf7.execute-api.us-east-1.amazonaws.com/prod/usuarios/prueba%40test.com/status \
   -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd" \
   -H "Content-Type: application/json" \
   -d '{"status":"disabled"}'
@@ -272,17 +276,18 @@ curl -X PATCH /usuarios/prueba%40test.com/status \
 
 **DELETE /usuarios/{email}** — `200 OK`
 ```bash
-curl -X DELETE /usuarios/prueba%40test.com \
+curl -X DELETE https://oxedtkrjf7.execute-api.us-east-1.amazonaws.com/prod/usuarios/prueba%40test.com \
   -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd"
 # → { "status": "success" }  (elimina el usuario y todos sus carnets asociados)
 ```
 
 **GET /validaciones** — `200 OK`
 ```bash
-curl /validaciones \
+curl https://oxedtkrjf7.execute-api.us-east-1.amazonaws.com/prod/validaciones \
   -H "x-api-key: a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd"
 # → []
 ```
+
 
 ## Modelo de Datos — DynamoDB (`IdenteraDB`)
 
@@ -298,6 +303,8 @@ Tabla única con patrón single-table. Todos los registros conviven en la misma 
 
 **Campos principales de una validación:**
 `id`, `userId`, `fecha`, `data` (objeto con nombre, cargo, arl, eps, cedula, codigoValidador, foto)
+
+El vínculo entre carnet y usuario es el campo `userId` del carnet, que referencia el `id` del usuario. Cada usuario con `role=USUARIO` tiene exactamente un carnet activo con su `codigoValidador` único — el mismo valor se replica en el perfil del usuario para consultas rápidas.
 
 **Cuenta de administrador raíz** (debe crearse una sola vez vía `POST /usuarios`):
 
@@ -346,27 +353,6 @@ Se recomienda cambiar la contraseña tras el primer acceso.
 | `useScanner.js` | |
 | `useImageUploader.js` | |
 
-### Servicios (`src/services/`)
-
-| Archivo | Línea | Método | Endpoint | Comentario en código | Lambda |
-|---|---|---|---|---|---|
-| `apiService.js` | 13 | GET | `${API_URL}/validaciones` | `// Obtiene la lista de validaciones, opcionalmente filtrada por userId` | `identera-lambda-validaciones` |
-| `apiService.js` | 24 | POST | `${API_URL}/validaciones?role=${role}` | `// Crea una validación. Envía id, userId, fecha y data. El role viaja como query param` | `identera-lambda-validaciones` |
-| `apiService.js` | 38 | DELETE | `${API_URL}/validaciones/${id}` | `// Elimina una validación por ID. Lanza error si el backend responde con fallo` | `identera-lambda-validaciones` |
-| `apiService.js` | 47 | DELETE | `${API_URL}/validaciones/all/clear` | `// Elimina todas las validaciones del sistema` | `identera-lambda-validaciones` |
-| `authService.js` | 28 | POST | `${API_URL}/login` | `// Autentica al usuario. Envía email y password. Persiste la sesión en localStorage` | `identera-lambda-usuarios` |
-| `authService.js` | 52 | GET | `${API_URL}/usuarios` | `// Obtiene la lista completa de usuarios sin contraseña` | `identera-lambda-usuarios` |
-| `authService.js` | 58 | POST | `${API_URL}/usuarios` | `// Crea un usuario. Envía id, email, password, name, role y status (siempre enabled)` | `identera-lambda-usuarios` |
-| `authService.js` | 79 | PATCH | `${API_URL}/usuarios/${email}/profile` | `// Actualiza nombre, email y contraseña (opcional). Gestiona cambio de email como PK` | `identera-lambda-usuarios` |
-| `authService.js` | 93 | PATCH | `${API_URL}/usuarios/${email}/status` | `// Cambia el estado del usuario a enabled o disabled` | `identera-lambda-usuarios` |
-| `authService.js` | 106 | PATCH | `${API_URL}/usuarios/${email}/role` | `// Cambia el rol del usuario: ADMINISTRADOR, USUARIO o SEGURIDAD` | `identera-lambda-usuarios` |
-| `authService.js` | 118 | DELETE | `${API_URL}/usuarios/${email}` | `// Elimina el usuario y todos sus carnets asociados. Devuelve error en JSON si falla` | `identera-lambda-usuarios` |
-| `apiService.js` | 57 | POST | `${API_URL}/qr/regenerar` | `// Genera y persiste un nuevo codigoValidador en el carnet activo del usuario autenticado` | `identera-lambda-qr` |
-| — | — | GET | `${API_URL}/qr/regenerar?userId=` | `// Genera un nuevo código sin persistirlo. Endpoint directo de la Lambda, no invocado desde el frontend` | `identera-lambda-qr` |
-| `apiService.js` | 82 | PATCH | `${API_URL}/carnets/${carnetId}` | `// Alias updateValidacion → editarCarnet. Edita campos del carnet de forma parcial (merge)` | `identera-lambda-carnets` |
-| `apiService.js` | 101 | GET | `${API_URL}/carnets` | `// Lista todos los carnets. Acepta ?userId= para filtrar` | `identera-lambda-carnets` |
-| `apiService.js` | 108 | POST | `${API_URL}/carnets` | `// Crea un carnet nuevo. Envía id, userId, fechaCreacion y los campos del carnet` | `identera-lambda-carnets` |
-
 
 ## Infraestructura AWS y CDK
 
@@ -399,6 +385,26 @@ El stack `IdenteraStack` se define en `infra/lib/identera-stack.ts` y provisiona
 | arquitecto | Juan Castillo |
 | PM | Xiomara Valencia |
 | Aprobador | Sebastián Sanchez |
+
+### Variables de entorno de las Lambdas
+
+Cada Lambda requiere dos variables de entorno configuradas en AWS. Para actualizarlas todas a la vez:
+
+```bash
+for fn in identera-lambda-validaciones identera-lambda-usuarios identera-lambda-qr identera-lambda-carnets; do
+  aws lambda update-function-configuration \
+    --function-name $fn \
+    --environment "Variables={DYNAMODB_TABLE_NAME=IdenteraDB,API_KEY=a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd}" \
+    --region us-east-1
+done
+```
+
+O manualmente desde la consola: Lambda → función → Configuración → Variables de entorno.
+
+| Variable | Valor |
+|---|---|
+| `DYNAMODB_TABLE_NAME` | `IdenteraDB` |
+| `API_KEY` | `a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd` |
 
 
 ## Despliegue
@@ -439,6 +445,7 @@ Crea `frontend/.env` a partir de `frontend/.env.example`:
 
 ```env
 VITE_API_BASE_URL=           # URL del API Gateway (prod o local)
+VITE_API_KEY=                # API Key del proyecto (ver sección de infraestructura)
 ```
 
 ### Levantar el frontend en desarrollo
@@ -450,46 +457,6 @@ cd frontend && npm install && npm run dev
 Disponible en `http://localhost:5173`.
 
 
-## Seguridad — API Key
-
-Todas las Lambdas validan el header `x-api-key` en cada petición. Las solicitudes sin la key correcta reciben `401 Unauthorized`.
-
-**API Key del proyecto:**
-```
-a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd
-```
-
-### Configurar la key en AWS Lambda
-
-La key vive como variable de entorno `API_KEY` en cada una de las 4 Lambdas. Configurarla vía AWS CLI:
-
-```bash
-for fn in identera-lambda-validaciones identera-lambda-usuarios identera-lambda-qr identera-lambda-carnets; do
-  aws lambda update-function-configuration \
-    --function-name $fn \
-    --environment "Variables={DYNAMODB_TABLE_NAME=IdenteraDB,API_KEY=a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd}" \
-    --region us-east-1
-done
-```
-
-O manualmente desde la consola de AWS: Lambda → función → Configuración → Variables de entorno → agregar `API_KEY`.
-
-### Implementar en el frontend
-
-Cada `fetch` al API Gateway debe incluir el header:
-
-```js
-headers: {
-  'Content-Type': 'application/json',
-  'x-api-key': 'a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd'
-}
-```
-
-Lo ideal es guardarlo en `frontend/.env` como `VITE_API_KEY` y leerlo con `import.meta.env.VITE_API_KEY` para no hardcodearlo en el código fuente.
-
-> **Nota:** Las solicitudes `OPTIONS` (preflight CORS) no requieren la key — el backend las deja pasar siempre.
-
-
 ## Soporte
 
 Desarrollado y mantenido por **Itera Process** — [iteraprocess.com](https://iteraprocess.com)
@@ -499,3 +466,7 @@ Desarrollado y mantenido por **Itera Process** — [iteraprocess.com](https://it
 | Arquitecto / Backend | juan.castillo |
 | Arquitecta / Frontend | andryd.ibarra |
 | Arquitecto / Backend / QA | juanpablo.molina |
+
+---
+
+*Identera es un producto interno de Itera Process. Todos los derechos reservados © 2026.*
