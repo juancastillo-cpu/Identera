@@ -27,6 +27,7 @@ const {
   TABLE_NAME,
   ok,
   err,
+  checkApiKey,
 } = require("./shared/db");
 
 // Genera código alfanumérico de 8 chars — mismo charset que el frontend
@@ -63,6 +64,10 @@ exports.handler = async (event) => {
   try {
 
     if (method === "OPTIONS") return ok({});
+
+    // ── Validación de API Key ──────────────────────────────────────────────
+    const keyError = checkApiKey(event);
+    if (keyError) return keyError;
 
     // ══════════════════════════════════════════════════════════════════════
     // GET /qr/regenerar?userId=

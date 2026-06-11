@@ -30,6 +30,7 @@ const {
   TABLE_NAME,
   ok,
   err,
+  checkApiKey,
   sanitizeUser,
 } = require("./shared/db");
 
@@ -65,6 +66,10 @@ exports.handler = async (event) => {
 
     // ── OPTIONS (preflight CORS) ───────────────────────────────────────────
     if (method === "OPTIONS") return ok({});
+
+    // ── Validación de API Key ──────────────────────────────────────────────
+    const keyError = checkApiKey(event);
+    if (keyError) return keyError;
 
     // ══════════════════════════════════════════════════════════════════════
     // POST /login

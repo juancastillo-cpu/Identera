@@ -24,6 +24,7 @@ const {
   TABLE_NAME,
   ok,
   err,
+  checkApiKey,
   sanitizeValidacion,
 } = require("./shared/db");
 
@@ -60,6 +61,10 @@ exports.handler = async (event) => {
     if (method === "OPTIONS") {
       return ok({});
     }
+
+    // ── Validación de API Key ──────────────────────────────────────────────
+    const keyError = checkApiKey(event);
+    if (keyError) return keyError;
 
     // ══════════════════════════════════════════════════════════════════════
     // GET /validaciones   →   lista todos o filtra por ?userId=

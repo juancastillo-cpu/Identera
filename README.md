@@ -422,6 +422,46 @@ cd frontend && npm install && npm run dev
 Disponible en `http://localhost:5173`.
 
 
+## Seguridad — API Key
+
+Todas las Lambdas validan el header `x-api-key` en cada petición. Las solicitudes sin la key correcta reciben `401 Unauthorized`.
+
+**API Key del proyecto:**
+```
+a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd
+```
+
+### Configurar la key en AWS Lambda
+
+La key vive como variable de entorno `API_KEY` en cada una de las 4 Lambdas. Configurarla vía AWS CLI:
+
+```bash
+for fn in identera-lambda-validaciones identera-lambda-usuarios identera-lambda-qr identera-lambda-carnets; do
+  aws lambda update-function-configuration \
+    --function-name $fn \
+    --environment "Variables={DYNAMODB_TABLE_NAME=IdenteraDB,API_KEY=a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd}" \
+    --region us-east-1
+done
+```
+
+O manualmente desde la consola de AWS: Lambda → función → Configuración → Variables de entorno → agregar `API_KEY`.
+
+### Implementar en el frontend
+
+Cada `fetch` al API Gateway debe incluir el header:
+
+```js
+headers: {
+  'Content-Type': 'application/json',
+  'x-api-key': 'a6276b1f7ad2b0379e7969cccba7e6bae9f39feb5bb20989a961a7a3813a40cd'
+}
+```
+
+Lo ideal es guardarlo en `frontend/.env` como `VITE_API_KEY` y leerlo con `import.meta.env.VITE_API_KEY` para no hardcodearlo en el código fuente.
+
+> **Nota:** Las solicitudes `OPTIONS` (preflight CORS) no requieren la key — el backend las deja pasar siempre.
+
+
 ## Soporte
 
 Desarrollado y mantenido por **Itera Process** — [iteraprocess.com](https://iteraprocess.com)

@@ -126,6 +126,29 @@ async function limpiarValidaciones() {
   await Promise.all(todas.map((v) => eliminarValidacion(v.id)));
 }
 
+// ─── VALIDACIÓN DE API KEY ────────────────────────────────────────────────────
+// La key se configura como variable de entorno API_KEY en cada Lambda.
+// El frontend la envía en el header "x-api-key".
+// Retorna null si es válida, o un objeto de respuesta 401 si no lo es.
+
+function checkApiKey(event) {
+  const expectedKey = process.env.API_KEY;
+
+  // Si no hay key configurada en la Lambda, dejamos pasar (útil en local sin env)
+  if (!expectedKey) return null;
+
+  const receivedKey =
+    event.headers?.["x-api-key"] ||
+    event.headers?.["X-Api-Key"] ||
+    event.headers?.["X-API-Key"];
+
+  if (!receivedKey || receivedKey !== expectedKey) {
+    return err("API key inválida o ausente.", 401);
+  }
+
+  return null; // key válida → continuar
+}
+
 // ─── HELPERS DE RESPUESTA HTTP ────────────────────────────────────────────────
 
 function ok(body, statusCode = 200) {
@@ -187,6 +210,7 @@ module.exports = {
   // helpers
   ok,
   err,
+  checkApiKey,
   sanitizeUser,
   sanitizeValidacion,
   PutCommand,
