@@ -158,7 +158,7 @@ export class IdenteraStack extends cdk.Stack {
       defaultCorsPreflightOptions: {
         allowOrigins: apigateway.Cors.ALL_ORIGINS,
         allowMethods: apigateway.Cors.ALL_METHODS,
-        allowHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+        allowHeaders: ["Content-Type", "Authorization", "X-Requested-With", "x-api-key"],
       },
     });
 
