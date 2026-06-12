@@ -89,6 +89,24 @@
   background: #2a2a2a;
 }
 
+.carnet-card-wrap .carnet-foto-placeholder {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #2a2a2a;
+  border: 2px dashed rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carnet-card-wrap .carnet-foto-placeholder::after {
+  content: '👤';
+  font-size: 1.4rem;
+  opacity: 0.4;
+}
+
 .carnet-card-wrap .carnet-user-info {
   display: flex;
   flex-direction: column;
