@@ -55,15 +55,6 @@ export const apiService = {
     return res.json();
   },
 
-  async clearValidaciones() {
-    const res = await fetch(`${API_URL}/validaciones/all/clear`, {
-      method: 'DELETE',
-      headers: headers()
-    });
-
-    if (!res.ok) throw new Error('Error limpiando validaciones');
-  },
-
   async regenerarQR() {
     const user = authService.getCurrentUser();
 

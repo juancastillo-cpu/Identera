@@ -127,8 +127,7 @@ export default function Validar() {
     }
   };
 
-  const borrarValidaciones = async () => {
-    await apiService.clearValidaciones();
+  const borrarValidaciones = () => {
     setValidacionesGuardadas([]);
   };
 

@@ -174,10 +174,6 @@ export class IdenteraStack extends cdk.Stack {
     rValidaciones.addMethod("GET",  intValidaciones); // GET  /validaciones?userId=
     rValidaciones.addMethod("POST", intValidaciones); // POST /validaciones?role=
 
-    // /validaciones/all/clear — antes de /{id} para evitar colisión de ruta
-    rValidaciones.addResource("all").addResource("clear")
-      .addMethod("DELETE", intValidaciones);           // DELETE /validaciones/all/clear
-
     rValidaciones.addResource("{id}")
       .addMethod("DELETE", intValidaciones);           // DELETE /validaciones/{id}
 
